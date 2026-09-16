@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuyan.fm.dao.AdminDao">
+  <resultMap id="BaseResultMap" type="com.xuyan.fm.model.AdminModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account_number" jdbcType="VARCHAR" property="accountNumber" />
+    <result column="admin_password" jdbcType="VARCHAR" property="adminPassword" />
+    <result column="admin_name" jdbcType="VARCHAR" property="adminName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, account_number, admin_password, admin_name
+  </sql>
+  <select id="selectByAccountNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, account_number, admin_password, admin_name
+    from sh_admin
+    where account_number = #{accountNumber}
+  </select>
+  <select id="getList" resultMap="BaseResultMap">
+    select id, account_number, admin_name
+    from sh_admin
+    limit #{begin}, #{nums}
+  </select>
+  <select id="getCount" resultType="int">
+    select count(*) from sh_admin
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sh_admin
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteAdmin" parameterType="java.lang.Long">
+    delete from sh_admin
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.xuyan.fm.model.AdminModel" useGeneratedKeys="true">
+    insert into sh_admin (account_number, admin_password, admin_name
+      )
+    values (#{accountNumber,jdbcType=VARCHAR}, #{adminPassword,jdbcType=VARCHAR}, #{adminName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.xuyan.fm.model.AdminModel" useGeneratedKeys="true">
+    insert into sh_admin
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="accountNumber != null">
+        account_number,
+      </if>
+      <if test="adminPassword != null">
+        admin_password,
+      </if>
+      <if test="adminName != null">
+        admin_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="accountNumber != null">
+        #{accountNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="adminPassword != null">
+        #{adminPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="adminName != null">
+        #{adminName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateAdmin" parameterType="com.xuyan.fm.model.AdminModel">
+    update sh_admin
+    <set>
+      <if test="accountNumber != null">
+        account_number = #{accountNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="adminPassword != null">
+        admin_password = #{adminPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="adminName != null">
+        admin_name = #{adminName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xuyan.fm.model.AdminModel">
+    update sh_admin
+    set account_number = #{accountNumber,jdbcType=VARCHAR},
+      admin_password = #{adminPassword,jdbcType=VARCHAR},
+      admin_name = #{adminName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

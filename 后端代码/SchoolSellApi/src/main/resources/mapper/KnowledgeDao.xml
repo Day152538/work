@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuyan.fm.dao.KnowledgeDao">
+
+    <resultMap id="BaseResultMap" type="com.xuyan.fm.model.KnowledgeChunk">
+        <id column="id" property="id"/>
+        <result column="source_type" property="sourceType"/>
+        <result column="source_id" property="sourceId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="embedding" property="embedding"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.xuyan.fm.model.KnowledgeChunk"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into knowledge_chunk (source_type, source_id, title, content, embedding)
+        values (#{sourceType}, #{sourceId}, #{title}, #{content}, #{embedding})
+    </insert>
+
+    <delete id="deleteBySourceType">
+        delete from knowledge_chunk where source_type = #{sourceType}
+    </delete>
+
+    <delete id="deleteAll">
+        delete from knowledge_chunk
+    </delete>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, source_type, source_id, title, content, embedding, create_time
+        from knowledge_chunk
+        order by id
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from knowledge_chunk
+    </select>
+
+</mapper>

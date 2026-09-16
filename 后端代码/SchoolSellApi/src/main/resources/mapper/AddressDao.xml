@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuyan.fm.dao.AddressDao">
+  <resultMap id="BaseResultMap" type="com.xuyan.fm.model.AddressModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="receive_name" jdbcType="VARCHAR" property="consigneeName" />
+    <result column="receive_phone" jdbcType="VARCHAR" property="consigneePhone" />
+    <result column="province_name" jdbcType="VARCHAR" property="provinceName" />
+    <result column="city_name" jdbcType="VARCHAR" property="cityName" />
+    <result column="region_name" jdbcType="VARCHAR" property="regionName" />
+    <result column="detail_address" jdbcType="VARCHAR" property="detailAddress" />
+    <result column="default_flag" jdbcType="TINYINT" property="defaultFlag" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, receive_name, receive_phone, province_name, city_name, region_name, detail_address,
+    default_flag, user_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sh_address
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getAddressByUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_address
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="getDefaultAddress" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id
+    from sh_address
+    where user_id = #{userId,jdbcType=INTEGER} and default_flag = 1
+  </select>
+  <delete id="deleteByPrimaryKeyAndUser" parameterType="java.lang.Long">
+    delete from sh_address
+    where id = #{id,jdbcType=INTEGER} and user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.xuyan.fm.model.AddressModel" useGeneratedKeys="true">
+    insert into sh_address (receive_name, receive_phone, province_name,
+      city_name, region_name, detail_address, 
+      default_flag, user_id)
+    values (#{consigneeName,jdbcType=VARCHAR}, #{consigneePhone,jdbcType=VARCHAR}, #{provinceName,jdbcType=VARCHAR}, 
+      #{cityName,jdbcType=VARCHAR}, #{regionName,jdbcType=VARCHAR}, #{detailAddress,jdbcType=VARCHAR}, 
+      #{defaultFlag,jdbcType=TINYINT}, #{userId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.xuyan.fm.model.AddressModel" useGeneratedKeys="true">
+    insert into sh_address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="consigneeName != null">
+        receive_name,
+      </if>
+      <if test="consigneePhone != null">
+        receive_phone,
+      </if>
+      <if test="provinceName != null">
+        province_name,
+      </if>
+      <if test="cityName != null">
+        city_name,
+      </if>
+      <if test="regionName != null">
+        region_name,
+      </if>
+      <if test="detailAddress != null">
+        detail_address,
+      </if>
+      <if test="defaultFlag != null">
+        default_flag,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="consigneeName != null">
+        #{consigneeName,jdbcType=VARCHAR},
+      </if>
+      <if test="consigneePhone != null">
+        #{consigneePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceName != null">
+        #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null">
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="regionName != null">
+        #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultFlag != null">
+        #{defaultFlag,jdbcType=TINYINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xuyan.fm.model.AddressModel">
+    update sh_address
+    <set>
+      <if test="consigneeName != null">
+        receive_name = #{consigneeName,jdbcType=VARCHAR},
+      </if>
+      <if test="consigneePhone != null">
+        receive_phone = #{consigneePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceName != null">
+        province_name = #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null">
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="regionName != null">
+        region_name = #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        detail_address = #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultFlag != null">
+        default_flag = #{defaultFlag,jdbcType=TINYINT},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByUserIdSelective" parameterType="com.xuyan.fm.model.AddressModel">
+    update sh_address
+    <set>
+      <if test="consigneeName != null">
+        receive_name = #{consigneeName,jdbcType=VARCHAR},
+      </if>
+      <if test="consigneePhone != null">
+        receive_phone = #{consigneePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceName != null">
+        province_name = #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="cityName != null">
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="regionName != null">
+        region_name = #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddress != null">
+        detail_address = #{detailAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultFlag != null">
+        default_flag = #{defaultFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xuyan.fm.model.AddressModel">
+    update sh_address
+    set receive_name = #{consigneeName,jdbcType=VARCHAR},
+      receive_phone = #{consigneePhone,jdbcType=VARCHAR},
+      province_name = #{provinceName,jdbcType=VARCHAR},
+      city_name = #{cityName,jdbcType=VARCHAR},
+      region_name = #{regionName,jdbcType=VARCHAR},
+      detail_address = #{detailAddress,jdbcType=VARCHAR},
+      default_flag = #{defaultFlag,jdbcType=TINYINT},
+      user_id = #{userId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

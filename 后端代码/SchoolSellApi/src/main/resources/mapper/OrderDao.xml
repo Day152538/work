@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuyan.fm.dao.OrderDao">
+  <resultMap id="BaseResultMap" type="com.xuyan.fm.model.OrderModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="idle_id" jdbcType="INTEGER" property="idleId" />
+    <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
+    <result column="payment_status" jdbcType="TINYINT" property="paymentStatus" />
+    <result column="payment_way" jdbcType="VARCHAR" property="paymentWay" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_number, user_id, idle_id, order_price, payment_status, payment_way, create_time, 
+    payment_time, order_status, is_deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sh_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getMyOrder" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_order
+    where user_id = #{userId,jdbcType=INTEGER} order by id desc
+  </select>
+  <select id="getAllOrder" parameterType="int" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_order
+    order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="countAllOrder" resultType="int">
+    select  count(*) from sh_order
+  </select>
+  <select id="findOrderByIdleIdList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_order where idle_id in
+    <foreach collection="idleIdList" index="index" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    order by id desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sh_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.xuyan.fm.model.OrderModel" useGeneratedKeys="true">
+    insert into sh_order (order_number, user_id, idle_id, 
+      order_price, payment_status, payment_way, 
+      create_time, payment_time, order_status, 
+      is_deleted)
+    values (#{orderNumber,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{idleId,jdbcType=INTEGER},
+      #{orderPrice,jdbcType=DECIMAL}, #{paymentStatus,jdbcType=TINYINT}, #{paymentWay,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{paymentTime,jdbcType=TIMESTAMP}, #{orderStatus,jdbcType=TINYINT},
+      #{isDeleted,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.xuyan.fm.model.OrderModel" useGeneratedKeys="true">
+    insert into sh_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderNumber != null">
+        order_number,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="idleId != null">
+        idle_id,
+      </if>
+      <if test="orderPrice != null">
+        order_price,
+      </if>
+      <if test="paymentStatus != null">
+        payment_status,
+      </if>
+      <if test="paymentWay != null">
+        payment_way,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="paymentTime != null">
+        payment_time,
+      </if>
+      <if test="orderStatus != null">
+        order_status,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderNumber != null">
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="idleId != null">
+        #{idleId,jdbcType=INTEGER},
+      </if>
+      <if test="orderPrice != null">
+        #{orderPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentStatus != null">
+        #{paymentStatus,jdbcType=TINYINT},
+      </if>
+      <if test="paymentWay != null">
+        #{paymentWay,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentTime != null">
+        #{paymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderStatus != null">
+        #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xuyan.fm.model.OrderModel">
+    update sh_order
+    <set>
+      <if test="orderNumber != null">
+        order_number = #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="idleId != null">
+        idle_id = #{idleId,jdbcType=INTEGER},
+      </if>
+      <if test="orderPrice != null">
+        order_price = #{orderPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentStatus != null">
+        payment_status = #{paymentStatus,jdbcType=TINYINT},
+      </if>
+      <if test="paymentWay != null">
+        payment_way = #{paymentWay,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentTime != null">
+        payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderStatus != null">
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xuyan.fm.model.OrderModel">
+    update sh_order
+    set order_number = #{orderNumber,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      idle_id = #{idleId,jdbcType=INTEGER},
+      order_price = #{orderPrice,jdbcType=DECIMAL},
+      payment_status = #{paymentStatus,jdbcType=TINYINT},
+      payment_way = #{paymentWay,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      order_status = #{orderStatus,jdbcType=TINYINT},
+      is_deleted = #{isDeleted,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 条件状态更新：仅当订单仍处于 fromStatus 时才变更为 toStatus（乐观锁语义） -->
+  <update id="updateOrderStatusIfCurrent">
+    update sh_order
+    set order_status = #{toStatus,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER} and order_status = #{fromStatus,jdbcType=TINYINT}
+  </update>
+
+  <!-- 条件支付：仅未支付订单可写入支付信息 -->
+  <update id="markPaidIfUnpaid">
+    update sh_order
+    set payment_status = 1,
+      payment_way = #{paymentWay,jdbcType=VARCHAR},
+      payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      order_status = 1
+    where id = #{id,jdbcType=INTEGER} and payment_status = 0 and order_status = 0
+  </update>
+
+  <!-- 超时未支付订单扫描（定时取消任务使用） -->
+  <select id="selectTimeoutUnpaidOrders" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_order
+    where order_status = 0 and payment_status = 0 and create_time &lt; #{deadline,jdbcType=TIMESTAMP}
+    order by id asc
+    limit #{limit}
+  </select>
+
+  <!-- AI 定价依据：按商品分类统计平台真实成交行情（只统计已支付、未取消订单） -->
+  <select id="selectRecentDealStatsByLabel" resultType="map">
+    select count(*)                        as cnt,
+           round(ifnull(avg(o.order_price), 0), 2) as avgPrice,
+           min(o.order_price)              as minPrice,
+           max(o.order_price)              as maxPrice
+    from sh_order o
+           join sh_idle_item i on o.idle_id = i.id
+    where i.idle_label = #{labelId,jdbcType=INTEGER}
+      and o.payment_status = 1
+      and o.order_status &lt;&gt; 4
+  </select>
+</mapper>

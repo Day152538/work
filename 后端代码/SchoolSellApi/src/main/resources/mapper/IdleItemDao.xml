@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuyan.fm.dao.IdleItemDao">
+  <resultMap id="BaseResultMap" type="com.xuyan.fm.model.IdleItemModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="idle_name" jdbcType="VARCHAR" property="idleName" />
+    <result column="idle_details" jdbcType="VARCHAR" property="idleDetails" />
+    <result column="picture_list" jdbcType="VARCHAR" property="pictureList" />
+    <result column="idle_price" jdbcType="DECIMAL" property="idlePrice" />
+    <result column="idle_place" jdbcType="VARCHAR" property="idlePlace" />
+    <result column="idle_label" jdbcType="INTEGER" property="idleLabel" />
+    <result column="idle_tags" jdbcType="VARCHAR" property="idleTags" />
+    <result column="idle_reason" jdbcType="VARCHAR" property="idleReason" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
+    <result column="idle_status" jdbcType="TINYINT" property="idleStatus" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="sales_count" jdbcType="INTEGER" property="salesCount" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, idle_name, idle_details, picture_list, idle_price, idle_place, idle_label, idle_tags, idle_reason, release_time,
+    idle_status, user_id, stock, sales_count
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sh_idle_item
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getAllIdleItem" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_idle_item
+    where user_id = #{userId,jdbcType=INTEGER} and idle_status!=0 order by id desc
+  </select>
+  <select id="countIdleItem"  resultType="int">
+    select COUNT(*) from sh_idle_item
+    where (idle_name LIKE "%"#{findValue}"%" or idle_details LIKE "%"#{findValue}"%" or idle_tags LIKE "%"#{findValue}"%") and idle_status = 1
+  </select>
+  <select id="countIdleItemByLable"  resultType="int">
+    select COUNT(*) from sh_idle_item
+    where idle_label = #{idleLabel} and idle_status = 1
+  </select>
+  <select id="countIdleItemByStatus"  resultType="int">
+    select COUNT(*) from sh_idle_item
+    where idle_status = #{status}
+  </select>
+  <select id="findIdleItem" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_idle_item
+    where (idle_name LIKE "%"#{findValue}"%" or idle_details LIKE "%"#{findValue}"%" or idle_tags LIKE "%"#{findValue}"%") and idle_status = 1 order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="findOnSaleByFilter" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_idle_item
+    <where>
+      idle_status = 1
+      <if test="findValue != null and findValue != ''">
+        and (idle_name LIKE "%"#{findValue}"%" or idle_details LIKE "%"#{findValue}"%" or idle_tags LIKE "%"#{findValue}"%")
+      </if>
+      <if test="labelId != null">
+        and idle_label = #{labelId}
+      </if>
+      <if test="minPrice != null">
+        and idle_price &gt;= #{minPrice}
+      </if>
+      <if test="maxPrice != null">
+        and idle_price &lt;= #{maxPrice}
+      </if>
+    </where>
+    order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="findIdleItemByLable" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_idle_item
+    where idle_label = #{idleLabel}  and idle_status = 1 order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="getIdleItemByStatus" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_idle_item
+    where idle_status = #{status} order by id desc limit #{begin}, #{nums}
+  </select>
+  <select id="findIdleByList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sh_idle_item where id in
+    <foreach collection="idList" index="index" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    order by id desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sh_idle_item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 带属主条件的删除：防止水平越权删他人商品 -->
+  <delete id="deleteByIdAndUser">
+    delete from sh_idle_item
+    where id = #{id,jdbcType=INTEGER} and user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 带属主条件的选择性更新：防止水平越权改他人商品 -->
+  <update id="updateByIdAndUserSelective" parameterType="com.xuyan.fm.model.IdleItemModel">
+    update sh_idle_item
+    <set>
+      <if test="idleName != null">idle_name = #{idleName,jdbcType=VARCHAR},</if>
+      <if test="idleDetails != null">idle_details = #{idleDetails,jdbcType=VARCHAR},</if>
+      <if test="pictureList != null">picture_list = #{pictureList,jdbcType=VARCHAR},</if>
+      <if test="idlePrice != null">idle_price = #{idlePrice,jdbcType=DECIMAL},</if>
+      <if test="idlePlace != null">idle_place = #{idlePlace,jdbcType=VARCHAR},</if>
+      <if test="idleLabel != null">idle_label = #{idleLabel,jdbcType=INTEGER},</if>
+      <if test="idleTags != null">idle_tags = #{idleTags,jdbcType=VARCHAR},</if>
+      <if test="idleReason != null">idle_reason = #{idleReason,jdbcType=VARCHAR},</if>
+      <if test="releaseTime != null">release_time = #{releaseTime,jdbcType=TIMESTAMP},</if>
+      <if test="idleStatus != null">idle_status = #{idleStatus,jdbcType=TINYINT},</if>
+      <if test="stock != null">stock = #{stock,jdbcType=INTEGER},</if>
+    </set>
+    where id = #{id,jdbcType=INTEGER} and user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <!-- 条件状态流转（乐观锁）：仅当处于 fromStatus 时更新为 toStatus -->
+  <update id="updateIdleStatusIfCurrent">
+    update sh_idle_item
+    set idle_status = #{toStatus,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER} and idle_status = #{fromStatus,jdbcType=TINYINT}
+  </update>
+
+  <!--
+    下单预占库存：原子扣减 1 件（拍下即占库存，防并发超卖）。
+    仅当商品“在售(idle_status=1)且有库存”时可预占，返回受影响行数（=0 表示已售罄/已下架/被并发抢先）。
+    商品不随下单下架——只要还剩库存就继续挂在首页供其他买家购买。
+  -->
+  <update id="reserveStock">
+    update sh_idle_item
+    set stock = stock - 1
+    where id = #{id,jdbcType=INTEGER}
+      and idle_status = 1
+      and stock > 0
+  </update>
+
+  <!-- 预占后若剩余库存为 0，则自动下架(1 -> 2)：整件商品已无在售库存，不再出现在首页 -->
+  <update id="downIfNoStock">
+    update sh_idle_item
+    set idle_status = 2
+    where id = #{id,jdbcType=INTEGER}
+      and idle_status = 1
+      and stock &lt;= 0
+  </update>
+
+  <!-- 取消/放弃未支付订单时释放预占的 1 件库存 -->
+  <update id="releaseStock">
+    update sh_idle_item
+    set stock = stock + 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 释放库存后若又有在售库存(>0)且当前处于下架(2)，则自动重新上架(2 -> 1) -->
+  <update id="relistIfInStock">
+    update sh_idle_item
+    set idle_status = 1
+    where id = #{id,jdbcType=INTEGER}
+      and idle_status = 2
+      and stock > 0
+  </update>
+
+  <!--
+    支付成功：销量 +1。库存不在此处扣减（下单时已预占）；
+    MySQL 的 SET 从左到右取“已更新值”，如需在同一语句内据库存判断状态请拆成独立 update。
+  -->
+  <update id="increaseSalesCount">
+    update sh_idle_item
+    set sales_count = sales_count + 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.xuyan.fm.model.IdleItemModel" useGeneratedKeys="true">
+    insert into sh_idle_item (idle_name, idle_details, picture_list,
+      idle_price, idle_place, idle_label, idle_tags,
+      release_time, idle_status, user_id, stock, sales_count
+      )
+    values (#{idleName,jdbcType=VARCHAR}, #{idleDetails,jdbcType=VARCHAR}, #{pictureList,jdbcType=VARCHAR},
+      #{idlePrice,jdbcType=DECIMAL}, #{idlePlace,jdbcType=VARCHAR}, #{idleLabel,jdbcType=INTEGER}, #{idleTags,jdbcType=VARCHAR},
+      #{releaseTime,jdbcType=TIMESTAMP}, #{idleStatus,jdbcType=TINYINT}, #{userId,jdbcType=INTEGER},
+      #{stock,jdbcType=INTEGER}, #{salesCount,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.xuyan.fm.model.IdleItemModel" useGeneratedKeys="true">
+    insert into sh_idle_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="idleName != null">
+        idle_name,
+      </if>
+      <if test="idleDetails != null">
+        idle_details,
+      </if>
+      <if test="pictureList != null">
+        picture_list,
+      </if>
+      <if test="idlePrice != null">
+        idle_price,
+      </if>
+      <if test="idlePlace != null">
+        idle_place,
+      </if>
+      <if test="idleLabel != null">
+        idle_label,
+      </if>
+      <if test="idleTags != null">
+        idle_tags,
+      </if>
+      <if test="releaseTime != null">
+        release_time,
+      </if>
+      <if test="idleStatus != null">
+        idle_status,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="stock != null">
+        stock,
+      </if>
+      <if test="salesCount != null">
+        sales_count,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="idleName != null">
+        #{idleName,jdbcType=VARCHAR},
+      </if>
+      <if test="idleDetails != null">
+        #{idleDetails,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureList != null">
+        #{pictureList,jdbcType=VARCHAR},
+      </if>
+      <if test="idlePrice != null">
+        #{idlePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="idlePlace != null">
+        #{idlePlace,jdbcType=VARCHAR},
+      </if>
+      <if test="idleLabel != null">
+        #{idleLabel,jdbcType=INTEGER},
+      </if>
+      <if test="idleTags != null">
+        #{idleTags,jdbcType=VARCHAR},
+      </if>
+      <if test="releaseTime != null">
+        #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idleStatus != null">
+        #{idleStatus,jdbcType=TINYINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null">
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="salesCount != null">
+        #{salesCount,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xuyan.fm.model.IdleItemModel">
+    update sh_idle_item
+    <set>
+      <if test="idleName != null">
+        idle_name = #{idleName,jdbcType=VARCHAR},
+      </if>
+      <if test="idleDetails != null">
+        idle_details = #{idleDetails,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureList != null">
+        picture_list = #{pictureList,jdbcType=VARCHAR},
+      </if>
+      <if test="idlePrice != null">
+        idle_price = #{idlePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="idlePlace != null">
+        idle_place = #{idlePlace,jdbcType=VARCHAR},
+      </if>
+      <if test="idleLabel != null">
+        idle_label = #{idleLabel,jdbcType=INTEGER},
+      </if>
+      <if test="idleTags != null">
+        idle_tags = #{idleTags,jdbcType=VARCHAR},
+      </if>
+      <if test="idleReason != null">
+        idle_reason = #{idleReason,jdbcType=VARCHAR},
+      </if>
+      <if test="releaseTime != null">
+        release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idleStatus != null">
+        idle_status = #{idleStatus,jdbcType=TINYINT},
+      </if>
+      <if test="stock != null">
+        stock = #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="salesCount != null">
+        sales_count = #{salesCount,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xuyan.fm.model.IdleItemModel">
+    update sh_idle_item
+    set idle_name = #{idleName,jdbcType=VARCHAR},
+      idle_details = #{idleDetails,jdbcType=VARCHAR},
+      picture_list = #{pictureList,jdbcType=VARCHAR},
+      idle_price = #{idlePrice,jdbcType=DECIMAL},
+      idle_place = #{idlePlace,jdbcType=VARCHAR},
+      idle_label = #{idleLabel,jdbcType=INTEGER},
+      idle_tags = #{idleTags,jdbcType=VARCHAR},
+      idle_reason = #{idleReason,jdbcType=VARCHAR},
+      release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      idle_status = #{idleStatus,jdbcType=TINYINT},
+      user_id = #{userId,jdbcType=INTEGER},
+      stock = COALESCE(#{stock,jdbcType=INTEGER}, stock),
+      sales_count = COALESCE(#{salesCount,jdbcType=INTEGER}, sales_count)
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

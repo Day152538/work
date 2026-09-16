@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python \"C:\\\\Users\\\\DELL\\\\AppData\\\\Local\\\\Temp\\\\gen_ai_doc.py\")"
+    ]
+  }
+}

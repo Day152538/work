@@ -1,0 +1,70 @@
+# ============================================
+# 闲品校园 CampusTrade .gitignore
+# 只保留源代码，排除运行时数据、编译产物、临时文件
+# ============================================
+
+# === Node / 前端 ===
+node_modules/
+dist/
+.npm-global/
+*.log
+
+# === Java / Maven 编译产物 ===
+target/
+target_old*/
+target_hold*/
+*.class
+*.jar
+*.war
+*.iml
+
+# === 运行时用户数据（不上传） ===
+后端代码/SchoolSellApi/pic/
+后端代码/SchoolSellApi/uploads/
+后端代码/SchoolSellApi/files/
+后端代码/SchoolSellApi/src/main/resources/pic/
+
+# === 根目录所有临时文档（不上传，只保留 README.md） ===
+*.docx
+*.doc
+!README.md
+
+# === 开发过程临时文档（不上传） ===
+AI识图预填功能_实现计划.md
+代码分析报告.md
+整改说明_面试版.md
+简历技术知识点总结与面试题汇总.md
+AI识图预填功能-分析与实现方案.md
+
+# === IDE / 编辑器 ===
+.idea/
+.vscode/
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+
+# === 临时目录 ===
+.tmp_captcha/
+.tmp_vltest/
+.workbuddy/
+output/
+测试截图/
+tmp/
+temp/
+
+# === OS ===
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# === 环境变量 / 敏感配置 ===
+.env
+.env.local
+.env.*.local
+application-local.yml
+application-dev.yml.bak
+
+# === Vue2 旧版本（只维护 Vue3） ===
+前端代码/SchoolSellVue/

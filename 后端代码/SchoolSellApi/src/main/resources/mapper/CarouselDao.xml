@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuyan.fm.dao.CarouselDao">
+    <select id="findAll" resultType="com.xuyan.fm.model.CarouselModel">
+        select c.id, c.good_id as goodId, c.show_order as showOrder,
+               i.idle_name as goodName, i.picture_list as imgs
+        from sh_carousel c, sh_idle_item i
+        where i.id = c.good_id order by c.show_order asc
+    </select>
+</mapper>
